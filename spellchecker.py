@@ -66,8 +66,8 @@ def build_vocab(texts):
             except KeyError:
                 vocab[word] = 1
     return vocab
-
-vocab = build_vocab(train.question_text)
+f1 = open("F:/satyaprojects/EventDetection/california_fire_unaffected_filtered_hash.txt",'r',encoding='utf-8')
+vocab = build_vocab(f1.read())
 
 top_90k_words = dict(heapq.nlargest(90000, vocab.items(), key=itemgetter(1)))
 

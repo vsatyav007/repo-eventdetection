@@ -7,7 +7,6 @@ Created on Sun Mar 10 19:59:51 2019
 #remove urls
 #remove date & time
 #remove latitude & Longitude
-#remove HashTags
 #Remove Emojis or special characters
 #remove @tags
 
@@ -15,6 +14,7 @@ import re
 import os
 import emoji
 import time
+import hashlib
 
 contraction_dict = {"ain't": "is not", "aren't": "are not","can't": "cannot", "'cause": "because", "could've": "could have", "couldn't": "could not", "didn't": "did not",  "doesn't": "does not", "don't": "do not",
                     "hadn't": "had not", "hasn't": "has not", "haven't": "have not", "he'd": "he would","he'll": "he will", "he's": "he is", "how'd": "how did", "how'd'y": "how do you", "how'll": "how will", 
@@ -64,8 +64,10 @@ def preprocess():
                 writefilepath=processedir+writefilename
                 try:
                     f1 = open(filepath,'r',encoding='utf-8')
+                    linestowrite=set()
                     f2 = open(writefilepath,"w+",encoding='utf-8')
                     for x in f1:
+                        x=x.lower()
                         #remove urls
                         x = re.sub(r'https?:\/\/.*,', ',', x)
                         #remove datetime
@@ -75,27 +77,26 @@ def preprocess():
                         #remove floating point numbers
                         x=re.sub(r'-?[0-9]*\.[0-9]*,?',' ',x)
                         #replace contraction with acutal words
-                        print(x)
                         x=replace_contractions(x)
-                        print(x)
                         #remove hashtags and user tags
                         x=re.sub(r'[#@][a-zA-Z0-9]* +',' ',x)
                         #remove special characters
                         x=re.sub(r'[:-?;&)(!"*%_+$~/\[\]]','',x)
-                        #remove other characters other than alpha numeric
-                        x=re.sub(r'[^0-9A-Za-z]+g','',x)
                         #remove emoji's
                         x=emoji.get_emoji_regexp().sub(u'', x)
-                        #x=re.sub(r'\d*','',x)
                         #removing non word characters
                         x=re.sub(r'[^\w]', ' ', x)
                         #removing white space characters
                         x=x.strip()
                         #removing additional white spaces in between sentences
                         x=' '.join(x.split())
-                        #adding new line character
-                        x=x+'\n'
-                        f2.write(x)
+                        if str(x)!='':
+                            #adding new line character
+                            x=x+'\n'
+                            hashvalue=hashlib.md5(x.encode('utf-8')).hexdigest()
+                            if hashvalue not in linestowrite:
+                                f2.write(x)
+                                linestowrite.add(hashvalue)
                     f1.close()
                     f2.close()
                 except:               

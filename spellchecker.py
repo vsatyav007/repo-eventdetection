@@ -12,7 +12,7 @@ import heapq
 from operator import itemgetter
 from multiprocessing import Pool
 
-model = gensim.models.KeyedVectors.load_word2vec_format('../input/embeddings/GoogleNews-vectors-negative300/GoogleNews-vectors-negative300.bin', 
+model = gensim.models.KeyedVectors.load_word2vec_format("F:/satyaprojects/GoogleNews-vectors-negative300.bin/GoogleNews-vectors-negative300.bin", 
                                                         binary=True)
 words = model.index2word
 
@@ -56,10 +56,10 @@ def edits2(word):
     "All edits that are two edits away from `word`."
     return (e2 for e1 in edits1(word) for e2 in edits1(e1))
 
-def build_vocab(texts):
-    sentences = texts.apply(lambda x: x.split()).values
+def build_vocab(f1):
+    #sentences = texts.apply(lambda x: x.split()).values
     vocab = {}
-    for sentence in sentences:
+    for sentence in f1:
         for word in sentence:
             try:
                 vocab[word] += 1
@@ -67,9 +67,9 @@ def build_vocab(texts):
                 vocab[word] = 1
     return vocab
 f1 = open("F:/satyaprojects/EventDetection/california_fire_unaffected_filtered_hash.txt",'r',encoding='utf-8')
-vocab = build_vocab(f1.read())
+vocab = build_vocab(f1) 
 
-top_90k_words = dict(heapq.nlargest(90000, vocab.items(), key=itemgetter(1)))
+top_90k_words = dict(heapq.nlargest(900, vocab.items(), key=itemgetter(1)))
 
 pool = Pool(4)
 corrected_words = pool.map(correction,list(top_90k_words.keys()))

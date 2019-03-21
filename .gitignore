@@ -21,3 +21,9 @@ $RECYCLE.BIN/
 # =========================
 # Operating System Files
 # =========================
+
+#tweets data ignore
+*processed.txt
+
+#ignoring csv files
+*.csv

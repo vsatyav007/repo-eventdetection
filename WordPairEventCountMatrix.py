@@ -10,7 +10,7 @@ import pandas as pd
 import time
 
 def GetWordPairEventCountMatrix():
-    pdatawd=os.getcwd()+'/processeddata'
+    pdatawd=os.getcwd()+'/processeddata/'
     df=pd.read_csv('wordpairs.csv')
     v = df.as_matrix()
     for subdir, dirs, files in os.walk(pdatawd):

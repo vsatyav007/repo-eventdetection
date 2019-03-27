@@ -6,6 +6,8 @@ Created on Mon Mar 18 21:52:09 2019
 """
 
 import os
+import nltk
+nltk.download('stopwords')
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 import itertools
@@ -18,7 +20,7 @@ def getwordpairs():
     stop_words=set(stopwords.words('english'))
     #WordPairs List
     wordpairs_global =[]
-    pdatawd=os.getcwd()+'/processeddata'
+    pdatawd=os.getcwd()+'/processeddata/'
     for subdir, dirs, files in os.walk(pdatawd):  
         for file in files:
             filepath = subdir + os.sep + file

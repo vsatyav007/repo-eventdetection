@@ -1,0 +1,6 @@
+nltk==3.2.4
+nltk.download('stopword')
+nltk.download('punkt')
+emoji==0.5.1
+numpy==1.15.4
+pandas==0.23.4

@@ -67,60 +67,61 @@ def preprocess():
         dirfolder=os.path.join(processedir,subdir[len(datawd):])
         if not os.path.isdir(dirfolder):
             os.mkdir(dirfolder)
-        for file in files:
-            filepath = subdir + os.sep + file
-            if filepath.endswith(".txt"):
-                basefilename=os.path.basename(filepath)
-                filenamewithouext=str(os.path.splitext(basefilename)[0])
-                writefilename= filenamewithouext+'_processed.txt'
-                #writefilename=filenamewithouext+'.txt'
-                writefilepath=dirfolder+'//'+writefilename
-                try:
-                    f1 = open(filepath,'r',encoding='utf-8')
-                    linestowrite=set()
-                    f2 = open(writefilepath,"w+",encoding='utf-8')
-                    for x in f1:
-                        x=x.lower()
-                        #x=remove_nameentity(x)
-                        #remove urls
-                        x = re.sub(r'(via:)? +https?:\/\/.*,', ',', x)
-                        #remove datetime
-                        x=re.sub(r'\d+:?(\d+)?( +)?([ap]m):?( +([ce]dt)?)?',' ',x)
-                        #x=re.sub(r'cdt +',' ',x)
-                        x=re.sub(r'\d{4}-\d{2}-\d{2} +\d{2}:\d{2}:\d{2},', '', x)
-                        #remove temperature
-                        x=re.sub(r'\d+\/\d+°?[cf]',' ',x)
-                        #remove numbers
-                        x=re.sub(r'[0-9]*,?','',x)
-                        #remove floating point numbers
-                        x=re.sub(r'-?[0-9]*\.[0-9]*,?',' ',x)
-                        #replace contraction with acutal words
-                        x=replace_contractions(x)
-                        x=re.sub(r'\'s','',x)
-                        #remove hashtags and user tags
-                        x=re.sub(r'[#@]( +)?[a-zA-Z0-9.,_:]+','',x)
-                        #remove special characters
-                        x=re.sub(r'[:-?;&)(!"*%_+$~/\[\]]','',x)
-                        #remove emoji's
-                        x=emoji.get_emoji_regexp().sub(u'', x)
-                        #removing non word characters and extra spaces in sentence
-                        x=re.sub(r'[^\w]', ' ', x)
-                        x=re.sub(r'[^a-zA-Z0-9]',' ',x)
-                        x=re.sub(r' +',' ',x)
-                        #removing white space characters
-                        x=x.strip()
-                        if str(x)!='':
-                            #adding new line character
-                            x=x+'\n'
-                            hashvalue=hashlib.md5(x.encode('utf-8')).hexdigest()
-                            if hashvalue not in linestowrite:
-                                f2.write(x)
-                                linestowrite.add(hashvalue)
-                    f1.close()
-                    f2.close()
-                except:               
-                    f1.close()
-                    f2.close()
+        if not dirs:
+            for file in files:
+                filepath = subdir + os.sep + file
+                if filepath.endswith(".txt"):
+                    basefilename=os.path.basename(filepath)
+                    filenamewithouext=str(os.path.splitext(basefilename)[0])
+                    writefilename= filenamewithouext+'_processed.txt'
+                    #writefilename=filenamewithouext+'.txt'
+                    writefilepath=dirfolder+'//'+writefilename
+                    try:
+                        f1 = open(filepath,'r',encoding='utf-8')
+                        linestowrite=set()
+                        f2 = open(writefilepath,"w+",encoding='utf-8')
+                        for x in f1:
+                            x=x.lower()
+                            #x=remove_nameentity(x)
+                            #remove urls
+                            x = re.sub(r'(via:)? +https?:\/\/.*,', ',', x)
+                            #remove datetime
+                            x=re.sub(r'\d+:?(\d+)?( +)?([ap]m):?( +([ce]dt)?)?',' ',x)
+                            #x=re.sub(r'cdt +',' ',x)
+                            x=re.sub(r'\d{4}-\d{2}-\d{2} +\d{2}:\d{2}:\d{2},', '', x)
+                            #remove temperature
+                            x=re.sub(r'\d+\/\d+°?[cf]',' ',x)
+                            #remove numbers
+                            x=re.sub(r'[0-9]*,?','',x)
+                            #remove floating point numbers
+                            x=re.sub(r'-?[0-9]*\.[0-9]*,?',' ',x)
+                            #replace contraction with acutal words
+                            x=replace_contractions(x)
+                            x=re.sub(r'\'s','',x)
+                            #remove hashtags and user tags
+                            x=re.sub(r'[#@]( +)?[a-zA-Z0-9.,_:]+','',x)
+                            #remove special characters
+                            x=re.sub(r'[:-?;&)(!"*%_+$~/\[\]]','',x)
+                            #remove emoji's
+                            x=emoji.get_emoji_regexp().sub(u'', x)
+                            #removing non word characters and extra spaces in sentence
+                            x=re.sub(r'[^\w]', ' ', x)
+                            x=re.sub(r'[^a-zA-Z0-9]',' ',x)
+                            x=re.sub(r' +',' ',x)
+                            #removing white space characters
+                            x=x.strip()
+                            if str(x)!='':
+                                #adding new line character
+                                x=x+'\n'
+                                hashvalue=hashlib.md5(x.encode('utf-8')).hexdigest()
+                                if hashvalue not in linestowrite:
+                                    f2.write(x)
+                                    linestowrite.add(hashvalue)
+                        f1.close()
+                        f2.close()
+                    except:               
+                        f1.close()
+                        f2.close()
    
 if __name__=='__main__':
     start=time.time()

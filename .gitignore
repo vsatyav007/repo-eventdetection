@@ -26,4 +26,15 @@ $RECYCLE.BIN/
 *processed.txt
 
 #ignoring csv files
-*.csv
+*pool.csv
+
+california_fire.csv
+iowa_stf.csv
+iowa_stf_2.csv
+iowa_storm.csv
+jersey_storm.csv
+michigan_storm.csv
+napa_earthquake.csv
+newyork_storm.csv
+oklahoma_storm.csv
+globalwordpairs.csv

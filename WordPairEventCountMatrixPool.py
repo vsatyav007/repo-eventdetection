@@ -40,7 +40,7 @@ def appendresults():
         filename=os.getcwd()+os.sep+name+'pool.csv'
         df4=pd.read_csv(filename)
         df3=pd.concat([df3,df4],axis=1)
-    df3.to_csv('WordPairEventCountmatrix.csv',index=False)    
+    df3.to_csv('WordPairEventCountMatrix.csv',index=False)    
     print(df3.shape)    
            
 if __name__=='__main__':

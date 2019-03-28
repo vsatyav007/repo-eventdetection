@@ -27,7 +27,6 @@ $RECYCLE.BIN/
 
 #ignoring csv files
 *pool.csv
-
 california_fire.csv
 iowa_stf.csv
 iowa_stf_2.csv
@@ -38,3 +37,11 @@ napa_earthquake.csv
 newyork_storm.csv
 oklahoma_storm.csv
 globalwordpairs.csv
+texas_storm.csv
+vermont_storm.csv
+virginia_storm.csv
+washington_mudslide.csv
+
+washington_storm.csv
+
+washington_wildfire.csv

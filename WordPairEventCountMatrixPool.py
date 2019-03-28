@@ -45,7 +45,7 @@ def appendresults():
            
 if __name__=='__main__':
     start=time.time()
-    pool=multiprocessing.Pool(processes=len(subdirs))
+    pool=multiprocessing.Pool(processes= multiprocessing.cpu_count())
     for i in range(len(subdirs)):
         pool.apply_async(GetWordPairEventCountMatrix,args=(subdirs[i],))
     pool.close()

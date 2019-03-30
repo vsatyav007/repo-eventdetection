@@ -45,3 +45,20 @@ washington_mudslide.csv
 washington_storm.csv
 
 washington_wildfire.csv
+california_fire_frequncycount.csv
+california_firethreshold.csv
+iowa_stf_2threshold.csv
+iowa_stfthreshold.csv
+iowa_stormthreshold.csv
+jersey_stormthreshold.csv
+michigan_stormthreshold.csv
+napa_earthquakethreshold.csv
+newyork_stormthreshold.csv
+oklahoma_stormthreshold.csv
+texas_stormthreshold.csv
+vermont_stormthreshold.csv
+virginia_stormthreshold.csv
+washington_mudslidethreshold.csv
+washington_stormthreshold.csv
+washington_wildfirethreshold.csv
+WordPairEventCountMatrix1.csv

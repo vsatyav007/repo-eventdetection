@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Mar 27 23:25:28 2019
-
 @author: Satya
 """
 import multiprocessing
@@ -19,8 +17,7 @@ df1=[]
 
 def GetWordPairEventCountMatrix(pdatawd):
     k=np.zeros((df.shape[0],1),dtype=int)
-    for filename in os.listdir(pdatawd):
-        eventname=str(os.path.basename(pdatawd))                
+    for filename in os.listdir(pdatawd):               
         filepath = pdatawd + os.sep + filename
         if filepath.endswith('.txt'):
             f1=open(filepath,'r',encoding='utf-8')
@@ -31,15 +28,15 @@ def GetWordPairEventCountMatrix(pdatawd):
                     if ((v[i,0] in words) and (v[i,1] in words)):
                         k[i,0]=k[i,0]+1
             f1.close()
-    df2=pd.DataFrame({eventname:k[:,0]})
-    df2.to_csv(eventname+'pool.csv',index=False)
+            df2=pd.DataFrame({filename:k[:,0]})
+            df2.to_csv(str(os.path.splitext(filename)[0])+'pool.csv',index=False)
 
 def appendresults():
     df3=pd.read_csv('wordpairs.csv')
-    for name in subdirsnames:
-        filename=os.getcwd()+os.sep+name+'pool.csv'
-        df4=pd.read_csv(filename)
-        df3=pd.concat([df3,df4],axis=1)
+    for filename in os.listdir(os.getcwd()):
+        if filename.endswith('pool.csv'):
+            df4=pd.read_csv(filename)
+            df3=pd.concat([df3,df4],axis=1)
     df3.to_csv('WordPairEventCountMatrix.csv',index=False)    
     print(df3.shape)    
            

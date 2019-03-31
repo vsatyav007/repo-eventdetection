@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sun Mar 10 19:59:51 2019
-
 @author: Satya
 """
 #remove urls
@@ -15,6 +13,14 @@ import os
 import emoji
 import time
 import hashlib
+import nltk
+nltk.download('stopwords')
+nltk.download('averaged_perceptron_tagger')
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from nltk.stem import WordNetLemmatizer
+from nltk.corpus import wordnet
+
 #import en_core_web_sm
 contraction_dict = {"ain't": "is not", "aren't": "are not","can't": "cannot", "'cause": "because", "could've": "could have", "couldn't": "could not", "didn't": "did not",  "doesn't": "does not", "don't": "do not",
                     "hadn't": "had not", "hasn't": "has not", "haven't": "have not", "he'd": "he would","he'll": "he will", "he's": "he is", "how'd": "how did", "how'd'y": "how do you", "how'll": "how will", 
@@ -32,6 +38,15 @@ contraction_dict = {"ain't": "is not", "aren't": "are not","can't": "cannot", "'
                     "why've": "why have", "will've": "will have", "won't": "will not", "won't've": "will not have", "would've": "would have", "wouldn't": "would not", 
                     "wouldn't've": "would not have", "y'all": "you all", "y'all'd": "you all would","y'all'd've": "you all would have","y'all're": "you all are","y'all've": "you all have",
                     "you'd": "you would", "you'd've": "you would have", "you'll": "you will", "you'll've": "you will have", "you're": "you are", "you've": "you have","&amp;":"and","&lt;":"<","&gt;":">","&le;":"=<","&ge;":">="}
+stop_words=set(stopwords.words('english'))
+
+def removestopwords(line):
+    words=word_tokenize(line)
+    wordslist=[]
+    for word in words:
+            if not word in stop_words:
+                wordslist.append(word)
+    return ' '.join(wordslist)           
 
 def _get_contractions(contraction_dict):
     contraction_re = re.compile('(%s)' % '|'.join(contraction_dict.keys()))
@@ -43,6 +58,8 @@ def replace_contractions(text):
     def replace(match):
         return contractions[match.group(0)]
     return contractions_re.sub(replace, text)
+
+
 #def remove_nameentity(text):
 #    r1 = str(text)
 #    nlp = en_core_web_sm.load()
@@ -50,6 +67,44 @@ def replace_contractions(text):
 #    print([str(word) for word in doc if word.ent_type_ =='PERSON'])
 #    lst=' '.join(([str(word) for word in doc if word.ent_type_ !='PERSON']))
 #    return lst
+
+
+lemmatizer = WordNetLemmatizer()
+
+def nltk2wn_tag(nltk_tag):
+    if nltk_tag.startswith('J'):
+        return wordnet.ADJ
+    elif nltk_tag.startswith('V'):
+        return wordnet.VERB
+    elif nltk_tag.startswith('N'):
+        return wordnet.NOUN
+    elif nltk_tag.startswith('R'):
+        return wordnet.ADV
+    else:                    
+        return None
+
+def lemmatize_sentence(sentence):
+    nltk_tagged = nltk.pos_tag(nltk.word_tokenize(sentence))    
+    wn_tagged = map(lambda x: (x[0], nltk2wn_tag(x[1])), nltk_tagged)
+
+    res_words = []
+    for word, tag in wn_tagged:
+        if tag is None:                        
+            res_words.append(word)
+        else:
+            res_words.append(lemmatizer.lemmatize(word, tag))
+
+    return ' '.join(res_words)
+
+def removeUnnecessaryWords(x):
+    words=x.split()
+    for word in words:
+            if not len(word)>1:
+               words.remove(word) 
+    if len(words)>1:
+        return ' '.join(words)
+    else:
+        return ""
 def preprocess():    
     processedir=os.getcwd()+'/processeddata/'
     datawd=os.getcwd()+'/disatersdata/'
@@ -82,6 +137,7 @@ def preprocess():
                         f2 = open(writefilepath,"w+",encoding='utf-8')
                         for x in f1:
                             x=x.lower()
+                            x=replace_contractions(x)                            
                             #x=remove_nameentity(x)
                             #remove urls
                             x = re.sub(r'(via:)? +https?:\/\/.*,', ',', x)
@@ -95,21 +151,25 @@ def preprocess():
                             x=re.sub(r'[0-9]*,?','',x)
                             #remove floating point numbers
                             x=re.sub(r'-?[0-9]*\.[0-9]*,?',' ',x)
-                            #replace contraction with acutal words
-                            x=replace_contractions(x)
-                            x=re.sub(r'\'s','',x)
                             #remove hashtags and user tags
                             x=re.sub(r'[#@]( +)?[a-zA-Z0-9.,_:]+','',x)
                             #remove special characters
                             x=re.sub(r'[:-?;&)(!"*%_+$~/\[\]]','',x)
                             #remove emoji's
                             x=emoji.get_emoji_regexp().sub(u'', x)
+                            #replace contraction with acutal words                            
+                            x=removestopwords(x)
+                            x=lemmatize_sentence(x)
+                            x=re.sub(r'\'s','',x)                            
                             #removing non word characters and extra spaces in sentence
                             x=re.sub(r'[^\w]', ' ', x)
                             x=re.sub(r'[^a-zA-Z0-9]',' ',x)
                             x=re.sub(r' +',' ',x)
                             #removing white space characters
+                            x=re.sub(r' +[a-zA-Z] +','',x)
                             x=x.strip()
+                            #x=' '.join()
+                            x=removeUnnecessaryWords(x)
                             if str(x)!='':
                                 #adding new line character
                                 x=x+'\n'

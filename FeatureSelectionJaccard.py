@@ -5,8 +5,7 @@
 import pandas as pd
 import numpy as np
 import time
-import numpy as np
-
+import itertools
 
 def jaccard_similarity(im1, im2):
     """
@@ -41,14 +40,16 @@ def jaccard_similarity(im1, im2):
     union = np.logical_or(im1, im2)
     l=np.divide(intersection.sum(axis=1), union.sum(axis=1))
     return l
+
 def jaccard():
+    events=pd.read_csv('events.csv')
     WPMB=pd.read_csv('WordPairMatrizBinarized.csv')
-    events=np.array([1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0])
-    events=events.reshape(-1,events.shape[0])
-    events=np.repeat(events,repeats=WPMB.shape[0],axis=0)
+    events1=np.array(events)
+    events1=events1.reshape(-1,events1.shape[0])
+    events1=np.repeat(events1,repeats=WPMB.shape[0],axis=0)
     WPMB1=WPMB.iloc[:,2:]
     l=WPMB1.values
-    j=jaccard_similarity(l,events)
+    j=jaccard_similarity(l,events1)
     jac=pd.DataFrame(j)
     WPMB['jaccard']=jac
     WPMB.to_csv('Jaccard.csv',index=False)
@@ -56,15 +57,59 @@ def jaccard():
 
 def wordPairMatrixBinarizer():
     WPECM=pd.read_csv('WordPairEventCountMatrix.csv')
-    WP=pd.read_csv('wordpairs.csv')
-    WPMB=pd.DataFrame(np.zeros((WPECM.shape[0],WPECM.shape[1]-2)),columns=WPECM.columns.values[2:])
-    for x in WPECM.columns.values[2:]:
-        WPMB[x]=np.where(WPECM[x]>=8,1,0)
+    WP=pd.read_csv('wordpairs.csv')    
+    k1=list(itertools.permutations(range(2,12), 3))
+    k2=list(itertools.permutations(range(12,22), 3))
+    k3=list(itertools.permutations(range(22,32), 3))
+    columnsval=[]
+    k4=[k1,k2,k3]
+    events=[]
+    i=2 #setting threshold
+    j=0
+    for k in k4:        
+        for x in k:     
+            columnsval.append(WPECM.columns.values[x[1]])
+            if 'unaffected' in WPECM.columns.values[x[1]]:
+                events.append(0)
+            else:
+                events.append(1)
+    WPMB=pd.DataFrame(np.zeros((WPECM.shape[0],2160)),columns=columnsval)
+    for k in k4:    
+        for x in k:
+            pre=x[0]
+            cur=x[1]
+            nex=x[2]
+            curV=WPECM.iloc[:,cur]
+            preV=WPECM.iloc[:,pre]
+            nexV=WPECM.iloc[:,nex]    
+            WPMB.iloc[:,j]=np.where(np.logical_and(((curV-preV)>i),((curV-nexV)>i)) ,1,0)
+            j+=1
     WPMB=pd.concat([WP,WPMB],axis=1)
-    WPMB.to_csv('WordPairMatrizBinarized.csv',index=False)
+    WPMB.to_csv('WordPairMatrixBinarized.csv',index=False)
+    events1=pd.DataFrame(events,columns=['target'])
+    events1.to_csv('events.csv',index=False)
+
+def dataformation():
+    df=pd.read_csv('Jaccard.csv')
+    df1=pd.DataFrame()
+    df=df.sort_values(by='jaccard',ascending=False)
+    df1['wordpairs']=df[['firstword','secondword']].apply(lambda x:','.join(x.astype(str)),axis=1)
+    df2=pd.concat([df1,df.iloc[:,2:]],axis=1)
+    df2.to_csv('concatwordpairs.csv',index=False)
+    df3=pd.DataFrame()
+    df2=df2.sort_values(['jaccard'],ascending=False)
+    df3=df2.iloc[:1500,:]
+    df2_Transposed=df3.T
+    df2_Transposed.iloc[:df2.shape[1]-1,:].to_csv('Transposedjaccard.csv',header=False)
+    df5=pd.read_csv('Transposedjaccard.csv')
+    events=pd.read_csv('events.csv')
+    df6=pd.concat([df5,events],axis=1)
+    df6.to_csv('EventDetectionData.csv',index=False)
+    
     
 if __name__=='__main__':
     start=time.time()
-    wordPairMatrixBinarizer()
+    events=wordPairMatrixBinarizer()
     jaccard()
+    dataformation()
     print('time taken is '+str(time.time()-start))

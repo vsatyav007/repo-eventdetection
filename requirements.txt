@@ -1,4 +1,4 @@
-nltk==3.2.4
+nltk>=3.4.5
 nltk.download('stopword')
 nltk.download('punkt')
 emoji==0.5.1

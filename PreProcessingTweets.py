@@ -188,4 +188,4 @@ def preprocess():
 if __name__=='__main__':
     start=time.time()
     preprocess()
-    print('time took:%s'%(time.time()-start)) ## 247 seconds
+    print('time took:%s'%(time.time()-start))

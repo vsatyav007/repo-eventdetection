@@ -2,3 +2,5 @@ nltk>=3.4.5
 emoji==0.5.1
 numpy
 pandas
+scikit-learn
+xgboost

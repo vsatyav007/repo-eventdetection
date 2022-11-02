@@ -30,12 +30,12 @@ def GetWordPairEventCountMatrix():
                     f1.close()
             df2=pd.DataFrame({eventname:k[:,0]})
             df[eventname]=df2
-            df2.to_csv(eventname+'.csv',index=False)
+            # df2.to_csv(eventname+'.csv',index=False)
     df.to_csv('WordPairEventCountmatrix.csv',index=False)
     print(df.shape)
     
 if __name__=='__main__':
     start=time.time()
     GetWordPairEventCountMatrix()
-    print('time took:%s'%(time.time()-start))    
+    print('time took:%s'%(time.time()-start))    # 2684 seconds ~= 45 minutes
     

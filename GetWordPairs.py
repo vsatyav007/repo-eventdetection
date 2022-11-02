@@ -47,4 +47,4 @@ if __name__ == '__main__':
     start = time.time()
     getwordpairs()
     wordpairstodf()
-    print('time took:%s' % (time.time()-start))
+    print('time took:%s' % (time.time()-start))  # 6.4 seconds

@@ -16,6 +16,7 @@ import hashlib
 import nltk
 nltk.download('stopwords')
 nltk.download('averaged_perceptron_tagger')
+nltk.download('wordnet')
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
@@ -179,11 +180,12 @@ def preprocess():
                                     linestowrite.add(hashvalue)
                         f1.close()
                         f2.close()
-                    except:               
+                    except Exception as exc: 
+                        print(str(exc))
                         f1.close()
                         f2.close()
    
 if __name__=='__main__':
     start=time.time()
     preprocess()
-    print('time took:%s'%(time.time()-start))
+    print('time took:%s'%(time.time()-start)) ## 247 seconds

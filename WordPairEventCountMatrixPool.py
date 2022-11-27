@@ -52,7 +52,7 @@ if __name__ == '__main__':
     print("No. of CPU Cores ", multiprocessing.cpu_count())  # 8 cores
     for i in range(len(subdirs)):
         pool.apply_async(GetWordPairEventCountMatrix, args=(subdirs[i],))
-    # pool.close()
+    pool.close()
     pool.join()
     appendresults()
     print('time took:%s' % (time.time()-start)) # 1347 seconds = 22 mins
